@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload entire repository
-          path: './web/fulstack_eval_light'
+          path: 'web/fullstack_eval_light'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
