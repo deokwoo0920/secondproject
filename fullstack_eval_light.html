@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>풀스택 2단계 통합 평가 가이드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:         #f8f9fc;
+    --bg2:        #ffffff;
+    --bg3:        #f1f3f8;
+    --border:     #e2e6ef;
+    --border2:    #c8cfe0;
+    --text:       #1a1d2e;
+    --muted:      #6b7280;
+    --blue:       #2563eb;
+    --blue-light: #eff6ff;
+    --blue-mid:   #bfdbfe;
+    --orange:     #ea580c;
+    --orange-light:#fff7ed;
+    --orange-mid: #fed7aa;
+    --green:      #16a34a;
+    --green-light:#f0fdf4;
+    --green-mid:  #bbf7d0;
+    --red:        #dc2626;
+    --red-light:  #fef2f2;
+    --yellow:     #d97706;
+    --yellow-light:#fffbeb;
+    --purple:     #7c3aed;
+    --purple-light:#f5f3ff;
+    --shadow-sm:  0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+    --shadow-md:  0 4px 12px rgba(0,0,0,.07), 0 2px 4px rgba(0,0,0,.04);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ─────────────────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(255,255,255,.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2rem; height: 56px;
+    box-shadow: var(--shadow-sm);
+  }
+  .nav-brand {
+    font-size: 1rem; font-weight: 700; letter-spacing: -.2px;
+    color: var(--blue);
+    display: flex; align-items: center; gap: .4rem;
+  }
+  .nav-brand .sep { color: var(--border2); font-weight: 300; margin: 0 .1rem; }
+  .nav-brand .sub { color: var(--muted); font-weight: 500; font-size: .82rem; }
+  .nav-links { display: flex; gap: .2rem; }
+  .nav-links a {
+    color: var(--muted); text-decoration: none;
+    padding: .38rem .8rem; border-radius: 6px;
+    font-size: .84rem; font-weight: 500;
+    transition: all .18s;
+  }
+  .nav-links a:hover { color: var(--blue); background: var(--blue-light); }
+  .nav-links a.active { color: var(--blue); background: var(--blue-light); font-weight: 600; }
+  .hamburger { display: none; cursor: pointer; color: var(--muted); font-size: 1.3rem; border: none; background: none; }
+
+  /* ── HERO ────────────────────────────────────────────────── */
+  .hero {
+    padding: 100px 2rem 52px;
+    text-align: center;
+    background: linear-gradient(180deg, #eef2ff 0%, #f8f9fc 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 99px; padding: .22rem .9rem;
+    font-size: .76rem; color: var(--muted); margin-bottom: 1.1rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .hero-badge .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); display: inline-block; }
+  .hero h1 {
+    font-size: clamp(1.9rem, 4.5vw, 3rem);
+    font-weight: 800; line-height: 1.18;
+    letter-spacing: -.5px;
+    color: var(--text);
+    margin-bottom: .7rem;
+  }
+  .hero h1 em { font-style: normal; color: var(--blue); }
+  .hero p { color: var(--muted); font-size: .95rem; max-width: 520px; margin: 0 auto 1.8rem; }
+
+  .hero-chips {
+    display: flex; flex-wrap: wrap; gap: .45rem;
+    justify-content: center; margin-bottom: 2.2rem;
+  }
+  .chip {
+    padding: .28rem .75rem; border-radius: 6px;
+    font-size: .77rem; font-family: 'JetBrains Mono', monospace;
+    font-weight: 600; letter-spacing: .3px;
+  }
+  .chip-blue   { background: var(--blue-light);   color: var(--blue);   border: 1px solid var(--blue-mid); }
+  .chip-orange { background: var(--orange-light);  color: var(--orange); border: 1px solid var(--orange-mid); }
+  .chip-green  { background: var(--green-light);   color: var(--green);  border: 1px solid var(--green-mid); }
+  .chip-purple { background: var(--purple-light);  color: var(--purple); border: 1px solid #ddd6fe; }
+
+  .score-ring {
+    display: inline-flex; flex-direction: column; align-items: center;
+    justify-content: center; width: 88px; height: 88px;
+    border-radius: 50%; border: 3px solid var(--blue);
+    background: var(--blue-light); margin: 0 auto 2.2rem;
+  }
+  .score-ring .num { font-size: 1.65rem; font-weight: 800; color: var(--blue); line-height: 1; }
+  .score-ring .lbl { font-size: .62rem; color: var(--muted); margin-top: 2px; font-weight: 600; }
+
+  /* ── TABS ────────────────────────────────────────────────── */
+  .tab-bar {
+    display: flex; gap: 0; overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem;
+    background: var(--bg2);
+    position: sticky; top: 56px; z-index: 80;
+    box-shadow: var(--shadow-sm);
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: .78rem 1.2rem;
+    background: none; border: none;
+    color: var(--muted); font-size: .86rem;
+    font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+    font-weight: 500; cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all .18s; white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--blue); }
+  .tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+
+  .tab-panel { display: none; animation: fadeUp .25s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION ─────────────────────────────────────────────── */
+  .section { max-width: 880px; margin: 0 auto; padding: 2.2rem 1.5rem; }
+
+  .section-title {
+    font-size: 1.05rem; font-weight: 700; letter-spacing: -.2px;
+    display: flex; align-items: center; gap: .5rem;
+    margin-bottom: 1rem;
+  }
+  .section-title::before {
+    content: ''; display: block;
+    width: 3px; height: 18px; border-radius: 2px;
+  }
+  .section-title.blue::before  { background: var(--blue); }
+  .section-title.orange::before{ background: var(--orange); }
+  .section-title.green::before { background: var(--green); }
+
+  /* ── CARDS ───────────────────────────────────────────────── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.2rem;
+    margin-bottom: .9rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .9rem; }
+
+  /* ── OVERVIEW GRID ───────────────────────────────────────── */
+  .overview-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: .7rem; margin-bottom: 1.8rem;
+  }
+  .ov-item {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 10px; padding: .9rem; text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .18s, border-color .18s;
+  }
+  .ov-item:hover { box-shadow: var(--shadow-md); border-color: var(--border2); }
+  .ov-item .ov-icon { font-size: 1.4rem; margin-bottom: .35rem; }
+  .ov-item .ov-label { font-size: .69rem; color: var(--muted); margin-bottom: .2rem; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .ov-item .ov-value { font-size: .9rem; font-weight: 700; color: var(--text); }
+
+  /* ── API TABLE ───────────────────────────────────────────── */
+  .api-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+  .api-table th {
+    background: var(--bg3); color: var(--muted);
+    padding: .55rem .85rem; text-align: left;
+    font-weight: 700; font-size: .72rem; letter-spacing: .5px;
+    text-transform: uppercase; border-bottom: 1px solid var(--border);
+  }
+  .api-table td {
+    padding: .62rem .85rem; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .api-table tr:last-child td { border-bottom: none; }
+  .api-table tr:hover td { background: var(--bg3); }
+  .method {
+    display: inline-block; padding: .18rem .5rem;
+    border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem; font-weight: 700; min-width: 56px; text-align: center;
+  }
+  .m-get    { background: var(--green-light);  color: var(--green);  border: 1px solid var(--green-mid); }
+  .m-post   { background: var(--blue-light);   color: var(--blue);   border: 1px solid var(--blue-mid); }
+  .m-put    { background: var(--yellow-light);  color: var(--yellow); border: 1px solid #fde68a; }
+  .m-delete { background: var(--red-light);    color: var(--red);    border: 1px solid #fecaca; }
+  .endpoint { font-family: 'JetBrains Mono', monospace; font-size: .79rem; color: var(--text); }
+  .status-code { font-family: 'JetBrains Mono', monospace; font-size: .76rem; color: var(--muted); }
+  .badge-req { background: var(--red-light); color: var(--red); border: 1px solid #fecaca; padding: .13rem .42rem; border-radius: 4px; font-size: .69rem; font-weight: 700; }
+  .badge-opt { background: var(--green-light); color: var(--green); border: 1px solid var(--green-mid); padding: .13rem .42rem; border-radius: 4px; font-size: .69rem; font-weight: 700; }
+
+  /* ── CODE BLOCK ──────────────────────────────────────────── */
+  .code-block {
+    background: #1e2433; border: 1px solid #2d3550;
+    border-radius: 8px; overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .79rem; line-height: 1.75;
+    margin: .7rem 0;
+  }
+  .code-header {
+    background: #262d42; border-bottom: 1px solid #2d3550;
+    padding: .38rem .85rem; display: flex; align-items: center;
+    justify-content: space-between;
+    font-size: .7rem; color: #7c88a8;
+  }
+  .code-header .dots { display: flex; gap: 5px; }
+  .code-header .dots span { width: 9px; height: 9px; border-radius: 50%; }
+  .code-header .dots span:nth-child(1) { background: #ff5f57; }
+  .code-header .dots span:nth-child(2) { background: #ffbd2e; }
+  .code-header .dots span:nth-child(3) { background: #28c840; }
+  .code-block pre { padding: .8rem 1rem; color: #c9d1e8; }
+  .kw  { color: #c792ea; }
+  .cls { color: #80cbc4; }
+  .fn  { color: #82aaff; }
+  .str { color: #c3e88d; }
+  .cm  { color: #546e7a; }
+
+  /* ── DIR TREE ─────────────────────────────────────────────── */
+  .dir-tree {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 8px; padding: 1rem 1.2rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .79rem; line-height: 1.95;
+  }
+  .dir-tree .dir  { color: var(--blue); font-weight: 600; }
+  .dir-tree .file { color: var(--muted); }
+  .dir-tree .ann  { color: var(--green); margin-left: .4rem; font-size: .74rem; }
+
+  /* ── RUBRIC ──────────────────────────────────────────────── */
+  .rubric-header {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr 1.2fr .55fr;
+    gap: .4rem; padding: .5rem .7rem;
+    background: var(--bg3); border-radius: 8px 8px 0 0;
+    border: 1px solid var(--border); border-bottom: none;
+    font-size: .7rem; font-weight: 700; letter-spacing: .4px;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .rubric-row {
+    display: grid;
+    grid-template-columns: 2fr 1.5fr 1.5fr 1.2fr 1.2fr .55fr;
+    gap: .4rem; padding: .72rem .7rem;
+    border: 1px solid var(--border); border-top: none;
+    font-size: .81rem; align-items: start;
+    background: var(--bg2); transition: background .15s;
+  }
+  .rubric-row:last-child { border-radius: 0 0 8px 8px; }
+  .rubric-row:hover { background: var(--bg3); }
+  .rubric-row:nth-child(even) { background: #fafbfd; }
+  .rubric-row:nth-child(even):hover { background: var(--bg3); }
+  .rubric-row .item-name { font-weight: 700; color: var(--text); font-size: .83rem; }
+  .rubric-row .s4 { color: var(--green); font-size: .76rem; }
+  .rubric-row .s3 { color: var(--blue); font-size: .76rem; }
+  .rubric-row .s2 { color: var(--yellow); font-size: .76rem; }
+  .rubric-row .s1 { color: var(--red); font-size: .76rem; }
+  .rubric-row .pts { font-weight: 700; color: var(--muted); text-align: center; font-family: 'JetBrains Mono', monospace; font-size: .8rem; }
+
+  .area-label {
+    display: flex; align-items: center; gap: .5rem;
+    padding: .55rem .75rem; margin-top: 1.2rem;
+    font-size: .77rem; font-weight: 700; letter-spacing: .3px;
+    border-radius: 6px; text-transform: uppercase;
+  }
+  .area-label.blue   { background: var(--blue-light);   color: var(--blue);   border-left: 3px solid var(--blue); }
+  .area-label.orange { background: var(--orange-light);  color: var(--orange); border-left: 3px solid var(--orange); }
+  .area-label.green  { background: var(--green-light);   color: var(--green);  border-left: 3px solid var(--green); }
+
+  /* ── SCORER ──────────────────────────────────────────────── */
+  .scorer-wrap { display: grid; grid-template-columns: 1fr 300px; gap: 1.4rem; align-items: start; }
+
+  .score-area { margin-bottom: 1.4rem; }
+  .score-area-title {
+    font-size: .77rem; font-weight: 700; letter-spacing: .4px;
+    text-transform: uppercase; margin-bottom: .7rem;
+    padding-bottom: .4rem; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .score-item {
+    display: flex; align-items: center; gap: .7rem;
+    padding: .58rem .75rem; margin-bottom: .35rem;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 8px; box-shadow: var(--shadow-sm);
+    transition: border-color .15s;
+  }
+  .score-item:hover { border-color: var(--border2); }
+  .score-item-label { flex: 1; font-size: .84rem; font-weight: 500; }
+  .score-item-label small { display: block; color: var(--muted); font-size: .71rem; margin-top: 1px; font-weight: 400; }
+  .score-btns { display: flex; gap: .28rem; }
+  .score-btn {
+    width: 32px; height: 32px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--bg3);
+    color: var(--muted); font-size: .8rem; font-weight: 700;
+    cursor: pointer; transition: all .14s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .score-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+  .score-btn.s4.selected { background: var(--green-light); color: var(--green); border-color: var(--green); }
+  .score-btn.s3.selected { background: var(--blue-light);  color: var(--blue);  border-color: var(--blue); }
+  .score-btn.s2.selected { background: var(--yellow-light); color: var(--yellow); border-color: var(--yellow); }
+  .score-btn.s1.selected { background: var(--red-light);   color: var(--red);   border-color: var(--red); }
+  .score-btn.s8.selected { background: var(--green-light); color: var(--green); border-color: var(--green); }
+  .score-btn.s0.selected { background: var(--red-light);   color: var(--red);   border-color: var(--red); }
+
+  /* sticky score card */
+  .score-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.15rem;
+    position: sticky; top: 116px;
+    box-shadow: var(--shadow-md);
+  }
+  .score-card h3 { font-size: .8rem; font-weight: 700; color: var(--muted); margin-bottom: .8rem; text-transform: uppercase; letter-spacing: .4px; }
+  .score-card .student-input {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 7px; padding: .48rem .75rem; color: var(--text);
+    font-size: .88rem; font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+    margin-bottom: .9rem; outline: none; font-weight: 500;
+    transition: border-color .18s, box-shadow .18s;
+  }
+  .score-card .student-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37,99,235,.1); }
+
+  .score-breakdown { display: flex; flex-direction: column; gap: .42rem; margin-bottom: .9rem; }
+  .score-row { display: flex; justify-content: space-between; align-items: center; font-size: .81rem; }
+  .score-row .label { color: var(--muted); font-weight: 500; }
+  .score-row .val { font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+  .score-row.blue   .val { color: var(--blue); }
+  .score-row.orange .val { color: var(--orange); }
+  .score-row.green  .val { color: var(--green); }
+
+  .total-score {
+    text-align: center; padding: .9rem;
+    background: var(--bg3); border-radius: 8px;
+    border: 1px solid var(--border); margin-bottom: .7rem;
+  }
+  .total-score .num {
+    font-size: 2.6rem; font-weight: 800; line-height: 1;
+    letter-spacing: -1px; color: var(--text);
+    transition: color .25s;
+  }
+  .total-score .denom { font-size: .88rem; color: var(--muted); }
+  .total-score .grade-badge {
+    display: inline-block; margin-top: .38rem;
+    padding: .18rem .7rem; border-radius: 99px;
+    font-size: .78rem; font-weight: 700;
+  }
+
+  .bonus-section { margin-top: .7rem; border-top: 1px solid var(--border); padding-top: .7rem; }
+  .bonus-item { display: flex; align-items: center; gap: .5rem; padding: .28rem 0; font-size: .79rem; }
+  .bonus-item input[type=checkbox] { accent-color: var(--green); width: 14px; height: 14px; cursor: pointer; }
+  .bonus-item label { cursor: pointer; color: var(--muted); flex: 1; font-weight: 500; }
+  .bonus-item .pts { color: var(--green); font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: .76rem; }
+
+  .reset-btn {
+    width: 100%; padding: .55rem;
+    background: transparent; border: 1px solid var(--border);
+    border-radius: 6px; color: var(--muted);
+    font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+    font-size: .8rem; cursor: pointer; transition: all .18s; font-weight: 500;
+  }
+  .reset-btn:hover { border-color: var(--red); color: var(--red); background: var(--red-light); }
+
+  /* ── TIMER ───────────────────────────────────────────────── */
+  .timer-wrap {
+    text-align: center; padding: 1.4rem 1rem;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 1.4rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .timer-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 4rem; font-weight: 700; line-height: 1;
+    color: var(--text); letter-spacing: 2px;
+    margin-bottom: .6rem;
+    transition: color .3s;
+  }
+  .timer-display.warning { color: var(--yellow); }
+  .timer-display.danger  { color: var(--red); animation: blink .55s infinite alternate; }
+  @keyframes blink { from { opacity: 1; } to { opacity: .45; } }
+  .timer-label { color: var(--muted); font-size: .8rem; margin-bottom: .9rem; font-weight: 500; }
+  .timer-btns { display: flex; gap: .65rem; justify-content: center; }
+  .timer-btn {
+    padding: .52rem 1.25rem; border-radius: 7px;
+    border: 1px solid var(--border); background: var(--bg3);
+    color: var(--text); font-size: .84rem;
+    font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+    cursor: pointer; font-weight: 600; transition: all .18s;
+  }
+  .timer-btn:hover { border-color: var(--border2); background: var(--bg); }
+  .timer-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .timer-btn.primary:hover { background: #1d4ed8; border-color: #1d4ed8; }
+
+  /* ── CHECKLIST ───────────────────────────────────────────── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex; align-items: flex-start; gap: .7rem;
+    padding: .65rem .75rem; border-bottom: 1px solid var(--border);
+    font-size: .86rem; transition: background .14s; cursor: pointer;
+    font-weight: 500;
+  }
+  .checklist li:hover { background: var(--bg3); }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist li.checked { opacity: .5; text-decoration: line-through; }
+  .check-icon {
+    width: 19px; height: 19px; border-radius: 5px;
+    border: 1.5px solid var(--border2); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px; transition: all .18s; font-size: .68rem; color: transparent;
+  }
+  .checklist li.checked .check-icon {
+    background: var(--green); border-color: var(--green); color: #fff;
+  }
+  .progress-bar-wrap { background: var(--bg3); border-radius: 99px; height: 5px; margin: .7rem 0 .35rem; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--green); border-radius: 99px; transition: width .4s; }
+  .progress-label { font-size: .73rem; color: var(--muted); text-align: right; font-weight: 500; }
+
+  /* ── INFO BOXES ──────────────────────────────────────────── */
+  .info-box {
+    display: flex; gap: .7rem; padding: .85rem .95rem;
+    border-radius: 8px; font-size: .83rem; margin: .7rem 0;
+    border-left: 3px solid; border: 1px solid;
+  }
+  .info-box.warn  { background: var(--yellow-light); border-color: #fde68a; color: #92400e; }
+  .info-box.error { background: var(--red-light);    border-color: #fecaca; color: var(--red); }
+  .info-box.tip   { background: var(--green-light);  border-color: var(--green-mid); color: #166534; }
+  .info-box.info  { background: var(--blue-light);   border-color: var(--blue-mid); color: #1e40af; }
+  .info-box .icon { flex-shrink: 0; font-size: .95rem; margin-top: 1px; }
+  .info-box .body { color: inherit; font-weight: 500; }
+  .info-box .body strong { color: inherit; }
+
+  /* ── FOOTER ──────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.8rem; text-align: center;
+    color: var(--muted); font-size: .78rem;
+    background: var(--bg2); margin-top: 3rem;
+    font-weight: 500;
+  }
+
+  /* ── RESPONSIVE ──────────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+    .scorer-wrap { grid-template-columns: 1fr; }
+    .card-grid { grid-template-columns: 1fr; }
+    .rubric-header, .rubric-row { grid-template-columns: 1.6fr 1fr 1fr .5fr; }
+    .rubric-header > *:nth-child(3),
+    .rubric-header > *:nth-child(4),
+    .rubric-row > *:nth-child(3),
+    .rubric-row > *:nth-child(4) { display: none; }
+    .score-card { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    ⚡ FullStack
+    <span class="sep">/</span>
+    <span class="sub">2단계 통합 평가</span>
+  </div>
+  <div class="nav-links">
+    <a href="#" class="active" onclick="showTab('overview',this);return false">개요</a>
+    <a href="#" onclick="showTab('assignment',this);return false">과제 명세</a>
+    <a href="#" onclick="showTab('rubric',this);return false">루브릭</a>
+    <a href="#" onclick="showTab('scorer',this);return false">채점기 🔢</a>
+  </div>
+  <button class="hamburger" onclick="toggleMobile()">☰</button>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge"><span class="dot"></span> 더조은 강남 &nbsp;|&nbsp; 자바 &amp; 클라우드 풀스택 취업캠프</div>
+  <h1>2단계 <em>통합 평가</em><br>가이드</h1>
+  <p>React 19 · Next.js 15+ · Spring Boot 3.x · Java 21<br>프론트엔드와 백엔드를 실제로 연동하는 풀스택 구현 평가</p>
+  <div class="score-ring">
+    <div class="num">100</div>
+    <div class="lbl">총점</div>
+  </div>
+  <div class="hero-chips">
+    <span class="chip chip-blue">🔵 Spring Boot 3.x</span>
+    <span class="chip chip-blue">☕ Java 21 LTS</span>
+    <span class="chip chip-orange">🟠 React 19</span>
+    <span class="chip chip-orange">▲ Next.js 15+</span>
+    <span class="chip chip-green">🐙 GitHub</span>
+    <span class="chip chip-purple">🗄️ H2 DB</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="showTab('overview',this)">📋 개요</button>
+  <button class="tab-btn" onclick="showTab('assignment',this)">📝 과제 명세</button>
+  <button class="tab-btn" onclick="showTab('rubric',this)">📊 루브릭</button>
+  <button class="tab-btn" onclick="showTab('scorer',this)">🔢 채점기</button>
+</div>
+
+<!-- ═══════════════════ TAB 1: 개요 ═══════════════════ -->
+<div id="tab-overview" class="tab-panel active">
+<div class="section">
+
+  <div class="overview-grid">
+    <div class="ov-item"><div class="ov-icon">🎯</div><div class="ov-label">도메인</div><div class="ov-value">도서 관리 시스템</div></div>
+    <div class="ov-item"><div class="ov-icon">⏱️</div><div class="ov-label">제한 시간</div><div class="ov-value">3~4시간</div></div>
+    <div class="ov-item"><div class="ov-icon">👤</div><div class="ov-label">제출 방식</div><div class="ov-value">개인 과제</div></div>
+    <div class="ov-item"><div class="ov-icon">🐙</div><div class="ov-label">제출물</div><div class="ov-value">GitHub + 시연</div></div>
+    <div class="ov-item"><div class="ov-icon">💯</div><div class="ov-label">총점</div><div class="ov-value">100점</div></div>
+    <div class="ov-item"><div class="ov-icon">⚡</div><div class="ov-label">가산점</div><div class="ov-value">최대 +10점</div></div>
+  </div>
+
+  <h2 class="section-title blue">평가 시나리오</h2>
+  <div class="card">
+    <p style="font-size:.9rem;line-height:1.85;color:var(--muted)">
+      여러분은 소규모 서점의 <strong style="color:var(--text)">온라인 도서 관리 시스템</strong>을 만들어달라는 요청을 받았습니다.<br>
+      수업에서 배운 <strong style="color:var(--blue)">Spring Boot REST API</strong> + <strong style="color:var(--orange)">React/Next.js</strong> 기술을 활용해,
+      도서 목록 조회와 새 도서 등록이 가능한 풀스택 애플리케이션을 완성하세요.
+    </p>
+    <div class="info-box warn" style="margin-top:.8rem">
+      <div class="icon">⚠️</div>
+      <div class="body">수업 예제 코드 <strong>(한입 북스, 의료 포털)</strong>를 도메인만 바꿔 그대로 제출하면 <strong>0점</strong> 처리됩니다.</div>
+    </div>
+  </div>
+
+  <h2 class="section-title blue" style="margin-top:2rem">배점 구조</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin-bottom:1.5rem">
+    <div class="card" style="border-color:var(--blue-mid);text-align:center;padding:1.2rem .9rem">
+      <div style="font-size:2.2rem;font-weight:800;color:var(--blue);line-height:1">40</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:.35rem;font-weight:600">점</div>
+      <div style="font-weight:700;font-size:.88rem;color:var(--text)">🔵 백엔드</div>
+      <div style="font-size:.73rem;color:var(--muted);margin-top:.15rem">Spring Boot · 4항목</div>
+    </div>
+    <div class="card" style="border-color:var(--orange-mid);text-align:center;padding:1.2rem .9rem">
+      <div style="font-size:2.2rem;font-weight:800;color:var(--orange);line-height:1">40</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:.35rem;font-weight:600">점</div>
+      <div style="font-weight:700;font-size:.88rem;color:var(--text)">🟠 프론트엔드</div>
+      <div style="font-size:.73rem;color:var(--muted);margin-top:.15rem">React/Next.js · 4항목</div>
+    </div>
+    <div class="card" style="border-color:var(--green-mid);text-align:center;padding:1.2rem .9rem">
+      <div style="font-size:2.2rem;font-weight:800;color:var(--green);line-height:1">20</div>
+      <div style="font-size:.72rem;color:var(--muted);margin-bottom:.35rem;font-weight:600">점</div>
+      <div style="font-weight:700;font-size:.88rem;color:var(--text)">🟢 연동·협업</div>
+      <div style="font-size:.73rem;color:var(--muted);margin-top:.15rem">GitHub · 시연 · README</div>
+    </div>
+  </div>
+
+  <h2 class="section-title green" style="margin-top:1.8rem">평가 진행 순서</h2>
+  <div class="card" style="padding:1rem 1.2rem">
+    <ol style="padding-left:1.1rem;font-size:.87rem;line-height:2.1;color:var(--muted)">
+      <li><strong style="color:var(--text)">GitHub URL 제출</strong> — 채팅 또는 제출창에 레포 주소 입력</li>
+      <li><strong style="color:var(--text)">로컬 실행 확인</strong> — 백엔드 :8080 + 프론트 :3000 동시 구동</li>
+      <li><strong style="color:var(--text)">3분 시연</strong> — 목록 조회 → 등록 → 상세 → 삭제 순 라이브 데모</li>
+      <li><strong style="color:var(--text)">질문 답변</strong> — 구조 설명 1~2개 (암기 불필요, 이해 기반)</li>
+      <li><strong style="color:var(--text)">점수 공지</strong> — 루브릭 기준 즉시 피드백</li>
+    </ol>
+  </div>
+
+  <h2 class="section-title orange" style="margin-top:1.8rem">기술 스택</h2>
+  <div class="card-grid">
+    <div class="card" style="border-color:var(--blue-mid)">
+      <div style="font-size:.73rem;color:var(--blue);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:.7rem">🔵 Backend</div>
+      <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.84rem">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">Spring Boot</span><span class="chip chip-blue" style="padding:.1rem .5rem;font-size:.7rem">3.x</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">Java</span><span class="chip chip-blue" style="padding:.1rem .5rem;font-size:.7rem">21 LTS</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">Spring Data JPA</span><span style="color:var(--muted);font-size:.74rem">H2 인메모리</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">Lombok</span><span style="color:var(--muted);font-size:.74rem">최신</span></div>
+      </div>
+    </div>
+    <div class="card" style="border-color:var(--orange-mid)">
+      <div style="font-size:.73rem;color:var(--orange);font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-bottom:.7rem">🟠 Frontend</div>
+      <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.84rem">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">React</span><span class="chip chip-orange" style="padding:.1rem .5rem;font-size:.7rem">19</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">Next.js</span><span class="chip chip-orange" style="padding:.1rem .5rem;font-size:.7rem">15+ App Router</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">Tailwind CSS</span><span style="color:var(--muted);font-size:.74rem">최신</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-weight:500">TypeScript</span><span style="color:var(--muted);font-size:.74rem">권장</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════ TAB 2: 과제 명세 ═══════════════════ -->
+<div id="tab-assignment" class="tab-panel">
+<div class="section">
+
+  <h2 class="section-title blue">API 명세 (백엔드 구현 기준)</h2>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="api-table">
+      <thead><tr>
+        <th>Method</th><th>Endpoint</th><th>Status</th><th>설명</th><th>필수</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><span class="method m-get">GET</span></td><td><span class="endpoint">/api/books</span></td><td><span class="status-code">200 OK</span></td><td>전체 도서 목록 조회</td><td><span class="badge-req">필수</span></td></tr>
+        <tr><td><span class="method m-get">GET</span></td><td><span class="endpoint">/api/books/{id}</span></td><td><span class="status-code">200 / 404</span></td><td>단건 조회 (ID 기반)</td><td><span class="badge-req">필수</span></td></tr>
+        <tr><td><span class="method m-post">POST</span></td><td><span class="endpoint">/api/books</span></td><td><span class="status-code">201 Created</span></td><td>새 도서 등록 (@RequestBody)</td><td><span class="badge-req">필수</span></td></tr>
+        <tr><td><span class="method m-delete">DELETE</span></td><td><span class="endpoint">/api/books/{id}</span></td><td><span class="status-code">204 No Content</span></td><td>도서 삭제</td><td><span class="badge-req">필수</span></td></tr>
+        <tr><td><span class="method m-put">PUT</span></td><td><span class="endpoint">/api/books/{id}</span></td><td><span class="status-code">200 OK</span></td><td>도서 정보 수정</td><td><span class="badge-opt">가산 +4pt</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2 class="section-title blue" style="margin-top:1.8rem">Entity 필드 (Book.java)</h2>
+  <div class="code-block">
+    <div class="code-header"><div class="dots"><span></span><span></span><span></span></div><span>Book.java</span></div>
+    <pre><span class="kw">@Entity</span>
+<span class="kw">public class</span> <span class="cls">Book</span> {
+    <span class="kw">@Id @GeneratedValue</span>(strategy = GenerationType.IDENTITY)
+    <span class="kw">private</span> <span class="cls">Long</span> id;          <span class="cm">// 자동 생성 PK</span>
+
+    <span class="kw">private</span> <span class="cls">String</span> title;      <span class="cm">// 도서 제목 (NOT NULL)</span>
+    <span class="kw">private</span> <span class="cls">String</span> author;     <span class="cm">// 저자명 (NOT NULL)</span>
+    <span class="kw">private</span> <span class="cls">Integer</span> price;     <span class="cm">// 가격</span>
+    <span class="kw">private</span> <span class="cls">Boolean</span> available; <span class="cm">// 대출 가능 여부 (default: true)</span>
+}</pre>
+  </div>
+
+  <h2 class="section-title orange" style="margin-top:1.8rem">프론트엔드 구조 (Next.js App Router)</h2>
+  <div class="dir-tree">
+    <div><span class="dir">book-management-front/</span></div>
+    <div>├── <span class="dir">src/app/</span></div>
+    <div>│   ├── <span class="file">layout.tsx</span><span class="ann">← 공통 헤더·푸터 (nav 포함)</span></div>
+    <div>│   ├── <span class="file">page.tsx</span><span class="ann">← 도서 목록 메인 (RSC)</span></div>
+    <div>│   ├── <span class="dir">books/[id]/</span></div>
+    <div>│   │   └── <span class="file">page.tsx</span><span class="ann">← 동적 라우트 상세 (RSC)</span></div>
+    <div>│   └── <span class="dir">register/</span></div>
+    <div>│       └── <span class="file">page.tsx</span><span class="ann">← 등록 폼 ('use client')</span></div>
+    <div>├── <span class="dir">components/</span></div>
+    <div>│   ├── <span class="file">BookCard.tsx</span><span class="ann">← 재사용 카드 (RSC)</span></div>
+    <div>│   └── <span class="file">BookForm.tsx</span><span class="ann">← 등록 폼 (RCC)</span></div>
+    <div>└── <span class="file">.env.local</span><span class="ann">← NEXT_PUBLIC_API_URL=http://localhost:8080</span></div>
+  </div>
+
+  <h2 class="section-title orange" style="margin-top:1.8rem">필수 화면 3개</h2>
+  <div style="display:flex;flex-direction:column;gap:.55rem">
+    <div class="card" style="display:flex;align-items:center;gap:.9rem;border-left:3px solid var(--blue)">
+      <span style="font-size:1.4rem">📋</span>
+      <div>
+        <div style="font-weight:700;font-size:.88rem">도서 목록 <code style="background:var(--bg3);padding:.1rem .38rem;border-radius:4px;font-size:.74rem;color:var(--blue);">/</code></div>
+        <div style="color:var(--muted);font-size:.79rem;margin-top:.18rem">GET /api/books 연동 · BookCard 컴포넌트 반복 렌더링 · <strong style="color:var(--text)">RSC</strong></div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;align-items:center;gap:.9rem;border-left:3px solid var(--blue)">
+      <span style="font-size:1.4rem">🔍</span>
+      <div>
+        <div style="font-weight:700;font-size:.88rem">도서 상세 <code style="background:var(--bg3);padding:.1rem .38rem;border-radius:4px;font-size:.74rem;color:var(--blue)">/books/[id]</code></div>
+        <div style="color:var(--muted);font-size:.79rem;margin-top:.18rem">동적 라우트 · GET 단건 API · 삭제 버튼(RCC) 포함</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex;align-items:center;gap:.9rem;border-left:3px solid var(--orange)">
+      <span style="font-size:1.4rem">✏️</span>
+      <div>
+        <div style="font-weight:700;font-size:.88rem">도서 등록 <code style="background:var(--bg3);padding:.1rem .38rem;border-radius:4px;font-size:.74rem;color:var(--orange)">/register</code></div>
+        <div style="color:var(--muted);font-size:.79rem;margin-top:.18rem">입력 폼 · POST /api/books · 등록 후 목록으로 이동 · <strong style="color:var(--orange)">'use client'</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title green" style="margin-top:1.8rem">제출 체크리스트</h2>
+  <div class="card" style="padding:0">
+    <ul class="checklist" id="checklist">
+      <li onclick="toggleCheck(this)"><div class="check-icon">✓</div>GitHub 레포지토리 URL 제출 (Public 또는 강사 초대)</li>
+      <li onclick="toggleCheck(this)"><div class="check-icon">✓</div>README.md — 실행 방법 + 기술 스택 + API 엔드포인트 목록</li>
+      <li onclick="toggleCheck(this)"><div class="check-icon">✓</div>백엔드 실행 확인 (./gradlew bootRun → http://localhost:8080)</li>
+      <li onclick="toggleCheck(this)"><div class="check-icon">✓</div>프론트엔드 실행 확인 (npm run dev → http://localhost:3000)</li>
+      <li onclick="toggleCheck(this)"><div class="check-icon">✓</div>H2 콘솔 접속 확인 (http://localhost:8080/h2-console)</li>
+      <li onclick="toggleCheck(this)"><div class="check-icon">✓</div>CORS 설정 완료 — 프론트에서 API 호출 정상 동작</li>
+      <li onclick="toggleCheck(this)"><div class="check-icon">✓</div>.env.local에 NEXT_PUBLIC_API_URL 설정</li>
+      <li onclick="toggleCheck(this)"><div class="check-icon">✓</div>GitHub 커밋 3회 이상 (의미 있는 메시지)</li>
+    </ul>
+    <div style="padding:.7rem 1rem">
+      <div class="progress-bar-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+      <div class="progress-label" id="progressLabel">0 / 8 완료</div>
+    </div>
+  </div>
+
+  <div class="info-box tip" style="margin-top:.9rem">
+    <div class="icon">💡</div>
+    <div class="body"><strong>CORS 빠른 설정:</strong> WB02 REST API 워크북 참고 — <code style="background:rgba(0,0,0,.06);padding:.1rem .3rem;border-radius:3px;font-size:.79rem">WebMvcConfigurer</code>에 <code style="background:rgba(0,0,0,.06);padding:.1rem .3rem;border-radius:3px;font-size:.79rem">addCorsMappings()</code>으로 http://localhost:3000 허용</div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════ TAB 3: 루브릭 ═══════════════════ -->
+<div id="tab-rubric" class="tab-panel">
+<div class="section">
+
+  <div class="area-label blue">🔵 Backend — Spring Boot &nbsp;·&nbsp; 40점 (4항목 × 4점 × 2.5)</div>
+  <div style="font-size:.71rem;color:var(--muted);margin:.38rem 0 .6rem;font-style:italic">참고: WB01 IoC/DI · WB02 REST API · WB03 JPA · WB04 Security/JWT</div>
+  <div class="rubric-header">
+    <div>항목</div><div>4점 (우수)</div><div>3점 (양호)</div><div>2점 (기본)</div><div>1점 (미흡)</div><div style="text-align:center">배점</div>
+  </div>
+  <div class="rubric-row">
+    <div class="item-name">① IoC / DI</div>
+    <div class="s4">@Service·@Repo 완벽 분리, 생성자 주입, 인터페이스 기반</div>
+    <div class="s3">계층 분리, 필드 주입 혼용</div>
+    <div class="s2">@Component만 사용</div>
+    <div class="s1">빈 미등록, new 직접 생성</div>
+    <div class="pts">4pt</div>
+  </div>
+  <div class="rubric-row">
+    <div class="item-name">② REST API</div>
+    <div class="s4">메서드·상태코드 정확, ResponseEntity 반환</div>
+    <div class="s3">CRUD 구현, 일부 메서드 오류</div>
+    <div class="s2">GET/POST만 구현</div>
+    <div class="s1">API 미동작</div>
+    <div class="pts">4pt</div>
+  </div>
+  <div class="rubric-row">
+    <div class="item-name">③ JPA / DB</div>
+    <div class="s4">Entity 완성, CRUD 전 동작</div>
+    <div class="s3">조회·등록 동작, 수정·삭제 오류</div>
+    <div class="s2">Repository 선언, 저장 미동작</div>
+    <div class="s1">DB 미연결</div>
+    <div class="pts">4pt</div>
+  </div>
+  <div class="rubric-row">
+    <div class="item-name">④ CORS</div>
+    <div class="s4">전역 CORS 완료, origin 정확히 허용</div>
+    <div class="s3">설정 있으나 일부 오류</div>
+    <div class="s2">부분 적용</div>
+    <div class="s1">CORS 미설정</div>
+    <div class="pts">4pt</div>
+  </div>
+
+  <div class="area-label orange" style="margin-top:1.4rem">🟠 Frontend — React 19 / Next.js 15+ &nbsp;·&nbsp; 40점 (4항목 × 4점 × 2.5)</div>
+  <div style="font-size:.71rem;color:var(--muted);margin:.38rem 0 .6rem;font-style:italic">참고: 성낙현 《리액트 잘하는 개발자 되기》 · Next.js App Router 1~7일차 실습</div>
+  <div class="rubric-header">
+    <div>항목</div><div>4점 (우수)</div><div>3점 (양호)</div><div>2점 (기본)</div><div>1점 (미흡)</div><div style="text-align:center">배점</div>
+  </div>
+  <div class="rubric-row">
+    <div class="item-name">① 컴포넌트</div>
+    <div class="s4">RSC/RCC 명확 구분, 재사용 컴포넌트 분리</div>
+    <div class="s3">대부분 분리, RSC/RCC 혼재</div>
+    <div class="s2">단일 파일 집중</div>
+    <div class="s1">미분리, 전체 RCC</div>
+    <div class="pts">4pt</div>
+  </div>
+  <div class="rubric-row">
+    <div class="item-name">② 라우팅</div>
+    <div class="s4">App Router, [id] 동적경로, layout.tsx</div>
+    <div class="s3">기본 라우팅, 동적경로 미적용</div>
+    <div class="s2">페이지 1~2개</div>
+    <div class="s1">라우팅 미구현</div>
+    <div class="pts">4pt</div>
+  </div>
+  <div class="rubric-row">
+    <div class="item-name">③ API 연동</div>
+    <div class="s4">실제 fetch, 로딩·에러 처리</div>
+    <div class="s3">fetch 동작, 예외처리 없음</div>
+    <div class="s2">하드코딩 데이터</div>
+    <div class="s1">API 미연동</div>
+    <div class="pts">4pt</div>
+  </div>
+  <div class="rubric-row">
+    <div class="item-name">④ UI / UX</div>
+    <div class="s4">Tailwind 활용, Skeleton UI</div>
+    <div class="s3">기본 Tailwind</div>
+    <div class="s2">인라인 스타일만</div>
+    <div class="s1">스타일 없음</div>
+    <div class="pts">4pt</div>
+  </div>
+
+  <div class="area-label green" style="margin-top:1.4rem">🟢 연동 및 협업 &nbsp;·&nbsp; 20점</div>
+  <div style="font-size:.71rem;color:var(--muted);margin:.38rem 0 .6rem;font-style:italic">실제 실행 기준 평가 / GitHub URL 미제출 시 해당 항목 0점</div>
+  <div class="rubric-header" style="grid-template-columns:2fr 2.5fr 1.8fr .55fr">
+    <div>항목</div><div>달성 (만점)</div><div>부분 달성</div><div style="text-align:center">배점</div>
+  </div>
+  <div class="rubric-row" style="grid-template-columns:2fr 2.5fr 1.8fr .55fr">
+    <div class="item-name">① 프론트↔백 연동</div>
+    <div class="s4">전체 CRUD 연동 동작, Network 탭 확인</div>
+    <div class="s3">조회·등록만 동작</div>
+    <div class="pts">8pt</div>
+  </div>
+  <div class="rubric-row" style="grid-template-columns:2fr 2.5fr 1.8fr .55fr">
+    <div class="item-name">② GitHub 커밋</div>
+    <div class="s4">의미 있는 커밋 3회+, 폴더 구조 명확</div>
+    <div class="s3">커밋 있음, 메시지 불명확</div>
+    <div class="pts">4pt</div>
+  </div>
+  <div class="rubric-row" style="grid-template-columns:2fr 2.5fr 1.8fr .55fr">
+    <div class="item-name">③ README</div>
+    <div class="s4">환경설정·실행방법·API 명세 포함</div>
+    <div class="s3">간단 실행 방법만</div>
+    <div class="pts">4pt</div>
+  </div>
+  <div class="rubric-row" style="grid-template-columns:2fr 2.5fr 1.8fr .55fr">
+    <div class="item-name">④ 시연</div>
+    <div class="s4">전 기능 라이브 시연, 구조 설명 가능</div>
+    <div class="s3">일부 기능 시연</div>
+    <div class="pts">4pt</div>
+  </div>
+
+  <div class="area-label" style="margin-top:1.4rem;background:var(--purple-light);color:var(--purple);border-left:3px solid var(--purple)">⭐ 가산점 항목 (최대 +10점)</div>
+  <div style="display:flex;flex-direction:column;gap:.38rem">
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 1rem">
+      <div style="font-size:.84rem;font-weight:500">PUT 수정 기능 구현 + 프론트 연동 (실제 동작)</div>
+      <div style="color:var(--purple);font-weight:700;font-family:'JetBrains Mono';font-size:.88rem;white-space:nowrap;margin-left:.5rem">+4pt</div>
+    </div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 1rem">
+      <div style="font-size:.84rem;font-weight:500">도서 키워드 검색 기능 (Query Param, 백+프론트)</div>
+      <div style="color:var(--purple);font-weight:700;font-family:'JetBrains Mono';font-size:.88rem;white-space:nowrap;margin-left:.5rem">+3pt</div>
+    </div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 1rem">
+      <div style="font-size:.84rem;font-weight:500">Suspense + Skeleton UI (animate-pulse) 적용</div>
+      <div style="color:var(--purple);font-weight:700;font-family:'JetBrains Mono';font-size:.88rem;white-space:nowrap;margin-left:.5rem">+2pt</div>
+    </div>
+    <div class="card" style="display:flex;justify-content:space-between;align-items:center;padding:.65rem 1rem">
+      <div style="font-size:.84rem;font-weight:500">Server Actions 활용 (Next.js 전용)</div>
+      <div style="color:var(--purple);font-weight:700;font-family:'JetBrains Mono';font-size:.88rem;white-space:nowrap;margin-left:.5rem">+2pt</div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ═══════════════════ TAB 4: 채점기 ═══════════════════ -->
+<div id="tab-scorer" class="tab-panel">
+<div class="section">
+
+  <!-- 타이머 -->
+  <div class="timer-wrap">
+    <div style="font-size:.72rem;color:var(--muted);margin-bottom:.35rem;letter-spacing:.8px;text-transform:uppercase;font-weight:600">⏱ 시연 타이머</div>
+    <div class="timer-display" id="timerDisplay">03:00</div>
+    <div class="timer-label" id="timerLabel">시연 시작 전 · 3분 카운트다운</div>
+    <div class="timer-btns">
+      <button class="timer-btn primary" id="timerStartBtn" onclick="startTimer()">▶ 시작</button>
+      <button class="timer-btn" onclick="resetTimer()">↺ 리셋</button>
+      <button class="timer-btn" onclick="setTimer(5)">5분</button>
+    </div>
+  </div>
+
+  <div class="scorer-wrap">
+    <!-- 좌: 점수 입력 -->
+    <div>
+
+      <!-- 백엔드 -->
+      <div class="score-area">
+        <div class="score-area-title" style="color:var(--blue)">
+          <span>🔵 백엔드 — Spring Boot</span>
+          <span style="font-family:'JetBrains Mono';font-size:.88rem;color:var(--blue)" id="be-total">0 / 16</span>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">① IoC / DI<small>생성자 주입, 계층 분리</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('be1',4,this)">4</button>
+            <button class="score-btn s3" onclick="setScore('be1',3,this)">3</button>
+            <button class="score-btn s2" onclick="setScore('be1',2,this)">2</button>
+            <button class="score-btn s1" onclick="setScore('be1',1,this)">1</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">② REST API<small>HTTP 메서드, 상태코드, ResponseEntity</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('be2',4,this)">4</button>
+            <button class="score-btn s3" onclick="setScore('be2',3,this)">3</button>
+            <button class="score-btn s2" onclick="setScore('be2',2,this)">2</button>
+            <button class="score-btn s1" onclick="setScore('be2',1,this)">1</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">③ JPA / DB<small>Entity 설계, CRUD 동작</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('be3',4,this)">4</button>
+            <button class="score-btn s3" onclick="setScore('be3',3,this)">3</button>
+            <button class="score-btn s2" onclick="setScore('be3',2,this)">2</button>
+            <button class="score-btn s1" onclick="setScore('be3',1,this)">1</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">④ CORS 설정<small>전역 설정, origin 허용</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('be4',4,this)">4</button>
+            <button class="score-btn s3" onclick="setScore('be4',3,this)">3</button>
+            <button class="score-btn s2" onclick="setScore('be4',2,this)">2</button>
+            <button class="score-btn s1" onclick="setScore('be4',1,this)">1</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 프론트엔드 -->
+      <div class="score-area">
+        <div class="score-area-title" style="color:var(--orange)">
+          <span>🟠 프론트엔드 — React / Next.js</span>
+          <span style="font-family:'JetBrains Mono';font-size:.88rem;color:var(--orange)" id="fe-total">0 / 16</span>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">① 컴포넌트 설계<small>RSC/RCC 구분, 재사용 컴포넌트</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('fe1',4,this)">4</button>
+            <button class="score-btn s3" onclick="setScore('fe1',3,this)">3</button>
+            <button class="score-btn s2" onclick="setScore('fe1',2,this)">2</button>
+            <button class="score-btn s1" onclick="setScore('fe1',1,this)">1</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">② 라우팅<small>App Router, [id] 동적경로, layout.tsx</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('fe2',4,this)">4</button>
+            <button class="score-btn s3" onclick="setScore('fe2',3,this)">3</button>
+            <button class="score-btn s2" onclick="setScore('fe2',2,this)">2</button>
+            <button class="score-btn s1" onclick="setScore('fe2',1,this)">1</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">③ API 연동<small>실제 fetch, 로딩·에러 처리</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('fe3',4,this)">4</button>
+            <button class="score-btn s3" onclick="setScore('fe3',3,this)">3</button>
+            <button class="score-btn s2" onclick="setScore('fe3',2,this)">2</button>
+            <button class="score-btn s1" onclick="setScore('fe3',1,this)">1</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">④ UI / UX<small>Tailwind, Skeleton UI</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('fe4',4,this)">4</button>
+            <button class="score-btn s3" onclick="setScore('fe4',3,this)">3</button>
+            <button class="score-btn s2" onclick="setScore('fe4',2,this)">2</button>
+            <button class="score-btn s1" onclick="setScore('fe4',1,this)">1</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 협업 -->
+      <div class="score-area">
+        <div class="score-area-title" style="color:var(--green)">
+          <span>🟢 연동 및 협업</span>
+          <span style="font-family:'JetBrains Mono';font-size:.88rem;color:var(--green)" id="co-total">0 / 20</span>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">① 프론트↔백 실제 연동<small>8점 · 4점 · 0점</small></div>
+          <div class="score-btns">
+            <button class="score-btn s8" onclick="setScore('co1',8,this)">8</button>
+            <button class="score-btn s4" onclick="setScore('co1',4,this)">4</button>
+            <button class="score-btn s0" onclick="setScore('co1',0,this)">0</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">② GitHub 커밋<small>4점 · 2점 · 0점</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('co2',4,this)">4</button>
+            <button class="score-btn s2" onclick="setScore('co2',2,this)">2</button>
+            <button class="score-btn s0" onclick="setScore('co2',0,this)">0</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">③ README<small>4점 · 2점 · 0점</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('co3',4,this)">4</button>
+            <button class="score-btn s2" onclick="setScore('co3',2,this)">2</button>
+            <button class="score-btn s0" onclick="setScore('co3',0,this)">0</button>
+          </div>
+        </div>
+        <div class="score-item">
+          <div class="score-item-label">④ 시연<small>4점 · 2점 · 0점</small></div>
+          <div class="score-btns">
+            <button class="score-btn s4" onclick="setScore('co4',4,this)">4</button>
+            <button class="score-btn s2" onclick="setScore('co4',2,this)">2</button>
+            <button class="score-btn s0" onclick="setScore('co4',0,this)">0</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 우: 점수 카드 -->
+    <div>
+      <div class="score-card">
+        <h3>👤 학생 이름</h3>
+        <input class="student-input" type="text" id="studentName" placeholder="이름 입력..." oninput="updateDisplay()">
+
+        <div class="score-breakdown">
+          <div class="score-row blue">
+            <span class="label">백엔드 (×2.5)</span>
+            <span class="val" id="be-score">0 / 40</span>
+          </div>
+          <div class="score-row orange">
+            <span class="label">프론트 (×2.5)</span>
+            <span class="val" id="fe-score">0 / 40</span>
+          </div>
+          <div class="score-row green">
+            <span class="label">연동·협업</span>
+            <span class="val" id="co-score">0 / 20</span>
+          </div>
+        </div>
+
+        <div class="total-score">
+          <div class="num" id="totalScore">0</div>
+          <div class="denom">/ 100점</div>
+          <div><span class="grade-badge" id="gradeBadge" style="background:var(--bg3);color:var(--muted)">미채점</span></div>
+        </div>
+
+        <div class="bonus-section">
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:.38rem;letter-spacing:.4px;text-transform:uppercase;font-weight:700">⭐ 가산점</div>
+          <div class="bonus-item">
+            <input type="checkbox" id="b1" onchange="updateDisplay()">
+            <label for="b1">PUT 수정 + 연동</label>
+            <span class="pts">+4</span>
+          </div>
+          <div class="bonus-item">
+            <input type="checkbox" id="b2" onchange="updateDisplay()">
+            <label for="b2">키워드 검색</label>
+            <span class="pts">+3</span>
+          </div>
+          <div class="bonus-item">
+            <input type="checkbox" id="b3" onchange="updateDisplay()">
+            <label for="b3">Suspense + Skeleton</label>
+            <span class="pts">+2</span>
+          </div>
+          <div class="bonus-item">
+            <input type="checkbox" id="b4" onchange="updateDisplay()">
+            <label for="b4">Server Actions</label>
+            <span class="pts">+2</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:.38rem;font-size:.76rem;border-top:1px solid var(--border);padding-top:.38rem">
+            <span style="color:var(--muted);font-weight:500">가산점</span>
+            <span style="color:var(--purple);font-family:'JetBrains Mono';font-weight:700" id="bonusDisplay">+0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:.25rem;font-size:.84rem;font-weight:700">
+            <span style="color:var(--text)">최종 점수</span>
+            <span style="color:var(--yellow);font-family:'JetBrains Mono'" id="finalScore">0 / 100</span>
+          </div>
+        </div>
+
+        <button class="reset-btn" style="margin-top:.7rem" onclick="resetAll()">↺ 초기화</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<footer>
+  Java &amp; Cloud Fullstack Bootcamp — 2단계 통합 평가 가이드
+  <span style="margin:0 .4rem;color:var(--border2)">·</span>
+  React 19 · Next.js 15+ · Spring Boot 3.x · Java 21
+</footer>
+
+<script>
+function showTab(name, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn, .nav-links a').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+function toggleCheck(li) {
+  li.classList.toggle('checked');
+  const items = document.querySelectorAll('#checklist li');
+  const done  = document.querySelectorAll('#checklist li.checked').length;
+  document.getElementById('progressBar').style.width = Math.round(done/items.length*100) + '%';
+  document.getElementById('progressLabel').textContent = done + ' / ' + items.length + ' 완료';
+}
+
+const scores = { be1:0,be2:0,be3:0,be4:0, fe1:0,fe2:0,fe3:0,fe4:0, co1:0,co2:0,co3:0,co4:0 };
+
+function setScore(key, val, btn) {
+  scores[key] = val;
+  btn.parentElement.querySelectorAll('.score-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateDisplay();
+}
+
+function updateDisplay() {
+  const be = scores.be1+scores.be2+scores.be3+scores.be4;
+  const fe = scores.fe1+scores.fe2+scores.fe3+scores.fe4;
+  const co = scores.co1+scores.co2+scores.co3+scores.co4;
+  document.getElementById('be-total').textContent = be + ' / 16';
+  document.getElementById('fe-total').textContent = fe + ' / 16';
+  document.getElementById('co-total').textContent = co + ' / 20';
+  const beC = be * 2.5, feC = fe * 2.5;
+  document.getElementById('be-score').textContent = beC + ' / 40';
+  document.getElementById('fe-score').textContent = feC + ' / 40';
+  document.getElementById('co-score').textContent = co + ' / 20';
+  const base = beC + feC + co;
+  document.getElementById('totalScore').textContent = base;
+  const bonusPts = Math.min(
+    (document.getElementById('b1').checked?4:0)+
+    (document.getElementById('b2').checked?3:0)+
+    (document.getElementById('b3').checked?2:0)+
+    (document.getElementById('b4').checked?2:0), 10);
+  document.getElementById('bonusDisplay').textContent = '+' + bonusPts;
+  const final = Math.min(base + bonusPts, 100);
+  document.getElementById('finalScore').textContent = final + ' / 100';
+  const totalEl = document.getElementById('totalScore');
+  const badge   = document.getElementById('gradeBadge');
+  let grade, bg, color;
+  if (base===0 && bonusPts===0) {
+    grade='미채점'; bg='var(--bg3)'; color='var(--muted)'; totalEl.style.color='var(--text)';
+  } else if (final>=90) {
+    grade='S'; bg='var(--green-light)'; color='var(--green)'; totalEl.style.color=color;
+  } else if (final>=80) {
+    grade='A'; bg='var(--blue-light)';  color='var(--blue)';  totalEl.style.color=color;
+  } else if (final>=70) {
+    grade='B'; bg='var(--yellow-light)';color='var(--yellow)';totalEl.style.color=color;
+  } else if (final>=60) {
+    grade='C'; bg='var(--orange-light)';color='var(--orange)';totalEl.style.color=color;
+  } else {
+    grade='F'; bg='var(--red-light)';   color='var(--red)';   totalEl.style.color=color;
+  }
+  badge.textContent=grade; badge.style.background=bg; badge.style.color=color;
+}
+
+function resetAll() {
+  Object.keys(scores).forEach(k => scores[k]=0);
+  document.querySelectorAll('.score-btn').forEach(b => b.classList.remove('selected'));
+  ['b1','b2','b3','b4'].forEach(id => document.getElementById(id).checked=false);
+  document.getElementById('studentName').value='';
+  updateDisplay();
+}
+
+let timerSec=180, timerInterval=null, timerRunning=false;
+function fmt(s){ return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0'); }
+function updateTimerDisplay() {
+  const el=document.getElementById('timerDisplay');
+  const lb=document.getElementById('timerLabel');
+  el.textContent=fmt(timerSec);
+  el.className='timer-display';
+  if (timerSec<=0) { el.classList.add('danger'); lb.textContent='⏰ 시간 종료!'; }
+  else if (timerSec<=30) { el.classList.add('danger'); lb.textContent='⚠️ '+timerSec+'초 남았습니다!'; }
+  else if (timerSec<=60) { el.classList.add('warning'); lb.textContent='⚡ 1분 미만 남음'; }
+  else lb.textContent='시연 진행 중 · '+fmt(timerSec)+' 남음';
+}
+function startTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval); timerRunning=false;
+    document.getElementById('timerStartBtn').textContent='▶ 재개';
+    document.getElementById('timerLabel').textContent='일시 정지'; return;
+  }
+  if (timerSec<=0) resetTimer();
+  timerRunning=true;
+  document.getElementById('timerStartBtn').textContent='⏸ 일시정지';
+  timerInterval=setInterval(()=>{ timerSec--; updateTimerDisplay();
+    if(timerSec<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('timerStartBtn').textContent='▶ 시작';}
+  },1000);
+}
+function resetTimer() {
+  clearInterval(timerInterval); timerRunning=false; timerSec=180;
+  document.getElementById('timerStartBtn').textContent='▶ 시작';
+  document.getElementById('timerDisplay').className='timer-display';
+  document.getElementById('timerDisplay').textContent='03:00';
+  document.getElementById('timerLabel').textContent='시연 시작 전 · 3분 카운트다운';
+}
+function setTimer(min) {
+  clearInterval(timerInterval); timerRunning=false; timerSec=min*60;
+  document.getElementById('timerStartBtn').textContent='▶ 시작';
+  document.getElementById('timerDisplay').className='timer-display';
+  updateTimerDisplay();
+}
+function toggleMobile() {
+  const nl=document.querySelector('.nav-links');
+  const showing=nl.style.display==='flex';
+  nl.style.cssText=showing?'':'display:flex;flex-direction:column;position:absolute;top:56px;right:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.5rem;z-index:200;box-shadow:var(--shadow-md)';
+}
+</script>
+</body>
+</html>
